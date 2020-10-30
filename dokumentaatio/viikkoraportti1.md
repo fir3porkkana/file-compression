@@ -7,3 +7,5 @@ Opin paljon pakkausalgoritmien toimintaperiaatteista.
 Epäselväksi jäi, miten pakkaaminen ja bittimanipulaatio toimivat konkretian tasolla. Pitänee laittaa viestiä ohjaajalle tai mennä koronankin uhalla gurulaan.
 
 Seuraavaksi alan väsäämään ohjelman varsinaista rakennetta pystyyn, ja sen myötä vaadittuja tietorakenteita.
+
+Aikaa käytin noin 4.5 tuntia.
