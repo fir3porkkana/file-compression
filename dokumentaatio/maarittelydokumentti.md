@@ -1,4 +1,5 @@
-## Määrittelydokumentti
+## Määrittelydokumentti 
+(paranee ajan kanssa, kun projekti saa suuntaa ja lähtee käyntiin)
 
 Opinto-ohjelma: TKT kandiohjelma
 Kieli: suomi
