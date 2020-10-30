@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'application'
+
+
+mainClassName = 'compression.Main'
+
+repositories {
+    jcenter()
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport
+
+dependencies {
+    testImplementation     'junit:junit:4.13'
+}
