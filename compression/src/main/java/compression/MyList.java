@@ -13,6 +13,10 @@ public class MyList<Type> {
         this.array = (Type[]) new Object[20];
     }
     
+    /**
+   * Puts the provided object to an index right after the last occupied index.
+   * @param object the object to be appended to the list
+   */
     public void append(Type object) {
         if (array[array.length - 1] != null) {
             lengthen();
@@ -37,10 +41,21 @@ public class MyList<Type> {
     //     return
     // }
     
+    /**
+   * Returns the object from the given index.
+   * @param index the index where the entry is to be returned from.
+   * @return the object in the given index.
+   */
     public Type get(int index) {
         return array[index];
     }
     
+    /**
+   * Puts the given object into the given index.
+   * @param index the index where the object is to be put into.
+   * @param object the object that is to be put into the list.
+   * 
+   */
     public void put(int index, Type object) {
         if (index > array.length - 1) {
             lengthen(index/array.length + 1);

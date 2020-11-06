@@ -16,6 +16,17 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        String test = "ääääääääääääääääääääääääääääääääääääääääääääblblblblblblbltesti";
+ 
+        
+        int[] charFreqs = new int[256];
+        
+        for (char c : test.toCharArray()) {
+            charFreqs[c]++;
+        }
+        for (int i = 0; i < charFreqs.length; i++) {
+            System.out.println("\n" + charFreqs[i]);
+        }
     }
     
 }
