@@ -9,15 +9,30 @@ repositories {
     jcenter()
 }
 
+dependencies {
+    testImplementation     'junit:junit:4.13'
+}
+
 jacocoTestReport {
+
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    
     reports {
         xml.enabled = true
         html.enabled = true
     }
+    // afterEvaluate {
+    //     classDirectories = files(classDirectories.files.collect {
+    //         fileTree(dir: it,
+    //                 exclude: ['**/util/**'])
+    //     })
+    // }
+}
+
+run {
+    standardInput = System.in
+    standardOutput = System.out
 }
 
 check.dependsOn jacocoTestReport
 
-dependencies {
-    testImplementation     'junit:junit:4.13'
-}

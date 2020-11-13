@@ -7,14 +7,31 @@ package compression;
  * @param left the left child
  * @param rigth the right child
  */
-abstract class HuffmanNode extends HuffmanTree {
-    public HuffmanTree left;
-    public HuffmanTree right;
+public class HuffmanNode implements Comparable<HuffmanNode> {
+    public int weight;
+    public char value;
+    
+    public boolean isLeaf;
 
-    public HuffmanNode(HuffmanTree left, HuffmanTree right, int weight) {
-        super(left.weight + right.weight);
+    public HuffmanNode left;
+    public HuffmanNode right;
+
+    public HuffmanNode(HuffmanNode left, HuffmanNode right, int weight) {
+        this.weight = weight;
         this.left = left;
         this.right = right;
+        this.isLeaf = false;
+    }
+    
+    public HuffmanNode(char value, int weight) {
+        this.weight = weight;
+        this.value = value;
+        this.isLeaf = true;
+    }
+    
+    @Override
+    public int compareTo(HuffmanNode comparee) {
+        return weight - comparee.weight;
     }
 
 }

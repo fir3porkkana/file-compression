@@ -14,6 +14,7 @@ abstract class HuffmanTree implements Comparable<HuffmanTree> {
         this.weight = weight;
     }
     
+    @Override
     public int compareTo(HuffmanTree comparee) {
         return weight - comparee.weight;
     }
