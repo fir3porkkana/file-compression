@@ -1,8 +1,5 @@
 package compression;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.PriorityQueue;
 
 /**
@@ -19,10 +16,10 @@ public class Huffman {
      * Compresses any input string-input it is given via the Huffman compression algorithm.
      * @param input the root node of the Huffman tree to be used
      */
-    public void compress(String input) throws IOException {
+    public HuffmanEncodedResult compress(String input) {
         int[] charFreqs = new int[256];
         
-        //lasketaan merkkien esiintymistiheys
+        //count the frequency for each character
         for (char c : input.toCharArray()) {
             charFreqs[c]++;
         }
@@ -50,22 +47,50 @@ public class Huffman {
         
         String encodedFileString = generateBinaryOutput(lookupTable, input);
         
-        byte[] bittibois = new byte[encodedFileString.length()];
+//        byte[] bittibois = new byte[encodedFileString.length()];
+//
+//        for (int i = 0; i < encodedFileString.length(); i++) {
+//            char c = encodedFileString.charAt(i);
+//            byte bitti = (byte) c;
+//            bittibois[i] = bitti;
+//        }
+//        
+//        Files.write(Paths.get("./out"), bittibois);
 
-        for (int i = 0; i < encodedFileString.length(); i++) {
-            char c = encodedFileString.charAt(i);
-            byte bitti = (byte) c;
-            bittibois[i] = bitti;
-        }
-        
-        Files.write(Paths.get("./out"), bittibois);
+        return new HuffmanEncodedResult(rootNode, encodedFileString);
     }
     
     /**
      * Decompress any binary input produced by the compress() -method
+     * @param encodedObject object that contains the message-to-be-decoded and 
+     * the associated decoding key (Huffman tree)
      */
-    public void decompress() {
+    public String decompress(HuffmanEncodedResult encodedObject) {
+        StringBuilder resultBuilder = new StringBuilder(encodedObject.encodedContent.length()/3);
+        HuffmanNode currentNode = encodedObject.huffmanTree;
+        int numberOfBits = 0;
+
+        //for each bit in the encoded string, traverse downward the tree
+        while (numberOfBits < encodedObject.encodedContent.length()) {
+            
+            //whenever a leaf is encountered, its value is concatenated to the 
+            //result string and it returns to the starting (root) node
+            while (!currentNode.isLeaf) {
+                char bit = encodedObject.encodedContent.charAt(numberOfBits);
+                if (bit == '0') {
+                    currentNode = currentNode.left;
+                } else if (bit == '1') {
+                    currentNode = currentNode.right;
+                }
+                numberOfBits++;
+            }
+//            System.out.println("asdknnalfknsknfasknfdlakndflaskdnflanfdas");
+            
+            resultBuilder.append(currentNode.value);
+            currentNode = encodedObject.huffmanTree;
+        }
         
+        return resultBuilder.toString();
     }
     
     /**
@@ -96,7 +121,7 @@ public class Huffman {
     }
     
     /**
-     * A recursive function that populates the provided lookup-table. 
+     * Generates and returns the encoded message. 
      * @param lookupTable used to look up which binary string matches with each character in the input
      * @param input used to gather the encoded input string with the provided lookup-table
      */

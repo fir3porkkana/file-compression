@@ -5,6 +5,8 @@
  */
 package compression;
 
+import java.util.Scanner;
+
 
 
 /**
@@ -17,13 +19,15 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        String test = "ääääääääääääääääääääääääääääääääääääääääääääblblblblblblbltesti";
-        String test = "järkevä ja mukava merkkijono testattavaksi";
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Type in your demo input: ");
+        String test = scanner.nextLine();
 
         Huffman huffmani = new Huffman();
         
-        huffmani.compress(test);
-        
+        HuffmanEncodedResult rez = huffmani.compress(test);
+        System.out.println("encoded string: " + rez.encodedContent);
+        System.out.println("de-encoded string: " + huffmani.decompress(rez));
          
     }
     
