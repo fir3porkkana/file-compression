@@ -24,7 +24,59 @@ public class Huffman {
             charFreqs[c]++;
         }
         
+        HuffmanNode rootNode = makeTreeFromFrequencyArray(charFreqs);
         
+        String[] lookupTable = populateLookupTable(rootNode, new String[256]);
+        
+        String encodedFileString = generateBinaryOutput(lookupTable, input);
+        
+        String encodedTreeString = "";
+
+        return new HuffmanEncodedResult(rootNode, encodedFileString);
+    }
+    
+    /**
+     * Encodes the given Huffman tree into a string of 0s and 1s.
+     * @param tree Huffman tree to be encoded
+     * @param bitTreeStructure the string that ends up as the bit representation of the tree
+     * @return a string that contains the given huffman tree in bit form
+     */
+    public String encodeTreeToBinaryForm(HuffmanNode tree, String bitTreeStructure) {
+        if (!tree.isLeaf) {
+            bitTreeStructure += '0';
+            //first, encode the leftmost subtree
+            bitTreeStructure = encodeTreeToBinaryForm(tree.left, bitTreeStructure);   
+            //then, the subtree on the right
+            bitTreeStructure = encodeTreeToBinaryForm(tree.right, bitTreeStructure);
+        } else if (tree.isLeaf) {
+            //get the node's character in 8-bit-long binary format and add it 
+            //directly behind the leaf indicator. do the same for its weight in a 32-bit
+            StringBuilder bitBuilder = new StringBuilder(7);
+            
+            //get the character's binary representation and ensure it's 8 bits long
+            String nodeValueBitForm = Integer.toBinaryString(tree.value);
+            for (int i = 0; i < 8 - nodeValueBitForm.length(); i++) {
+                bitBuilder.append('0');
+            }
+            nodeValueBitForm = bitBuilder.toString() + nodeValueBitForm;
+            
+            bitBuilder.setLength(0);
+            
+            //get the weight's binary representation and ensure it's 32 bits long
+            String nodeWeightBitForm = Integer.toBinaryString(tree.weight);
+            for (int i = 0; i < 32 - nodeValueBitForm.length(); i++) {
+                bitBuilder.append('0');
+            }
+            nodeWeightBitForm = bitBuilder.toString() + nodeWeightBitForm;
+            
+            bitTreeStructure += bitTreeStructure + nodeValueBitForm + nodeWeightBitForm;
+        }
+        
+        return bitTreeStructure;
+    }
+    
+    
+    public HuffmanNode makeTreeFromFrequencyArray(int[] charFreqs) {
         PriorityQueue<HuffmanNode> pqueueContainingLeaves = new PriorityQueue<>();
         
         for (int i = 0; i < charFreqs.length; i++) {
@@ -41,23 +93,26 @@ public class Huffman {
             pqueueContainingLeaves.add(tree);
         }
         
-        HuffmanNode rootNode = (HuffmanNode) pqueueContainingLeaves.poll();
+        return pqueueContainingLeaves.poll();
+    }
+    
+    /**
+     * Decodes the given string of 0s and 1s to its original form.
+     * [WORK IN PROGRESS - NOT YET FINISHED]
+     * @param i the index where the function is operating
+     * @param bitTreeStructure the bit string -form tree that is to be converted to its original form
+     * @return a string that contains the given huffman tree in bit form
+     */
+    public HuffmanNode decodeFreqArrayFromBinaryForm(String bitTreeStructure, int i, HuffmanNode node) {
+        char bit = bitTreeStructure.charAt(i);
+        i++;
         
-        String[] lookupTable = populateLookupTable(rootNode, new String[256]);
-        
-        String encodedFileString = generateBinaryOutput(lookupTable, input);
-        
-//        byte[] bittibois = new byte[encodedFileString.length()];
-//
-//        for (int i = 0; i < encodedFileString.length(); i++) {
-//            char c = encodedFileString.charAt(i);
-//            byte bitti = (byte) c;
-//            bittibois[i] = bitti;
-//        }
-//        
-//        Files.write(Paths.get("./out"), bittibois);
-
-        return new HuffmanEncodedResult(rootNode, encodedFileString);
+        if (bit == '1') {
+            
+        } else if (bit == '0') {
+            
+        }
+        return new HuffmanNode(bit, i);
     }
     
     /**

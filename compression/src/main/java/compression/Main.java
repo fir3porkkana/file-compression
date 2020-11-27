@@ -19,8 +19,9 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Type in your demo input: ");
+        Scanner scanner = new Scanner(System.in);
+        
         String test = scanner.nextLine();
 
         Huffman huffmani = new Huffman();
