@@ -19,16 +19,15 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.print("Type in your demo input: ");
+        Huffman huffmani = new Huffman();
+        System.out.println("Type in your demo input: ");
         Scanner scanner = new Scanner(System.in);
         
         String test = scanner.nextLine();
-
-        Huffman huffmani = new Huffman();
         
-        HuffmanEncodedResult rez = huffmani.compress(test);
-        System.out.println("encoded string: " + rez.encodedContent);
-        System.out.println("de-encoded string: " + huffmani.decompress(rez));
+        String rez = huffmani.compress(test);
+        System.out.println("encoded string: " + rez);
+        System.out.println("de-encoded string: \n" + huffmani.decompress(rez));
          
     }
     

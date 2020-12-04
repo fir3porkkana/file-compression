@@ -16,7 +16,7 @@ public class Huffman {
      * Compresses any input string-input it is given via the Huffman compression algorithm.
      * @param input the root node of the Huffman tree to be used
      */
-    public HuffmanEncodedResult compress(String input) {
+    public String compress(String input) {
         int[] charFreqs = new int[256];
         
         //count the frequency for each character
@@ -30,31 +30,39 @@ public class Huffman {
         
         String encodedFileString = generateBinaryOutput(lookupTable, input);
         
-        String encodedTreeString = "";
-
-        return new HuffmanEncodedResult(rootNode, encodedFileString);
+        PriorityQueue<HuffmanNode> pqueueContainingLeaves = new PriorityQueue<>();
+        
+        for (int i = 0; i < charFreqs.length; i++) {
+            if (charFreqs[i] > 0) {
+                pqueueContainingLeaves.add(new HuffmanNode((char) i, charFreqs[i]));
+            }
+        }
+        
+        String encodedTreeString = encodeTreeToBinaryForm(pqueueContainingLeaves);
+        System.out.println("merkkejä: " + (encodedTreeString.length()/40));
+        
+        String divider = "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
+        
+        //return the tree and the encoded input with a 48-bit
+        //divider in between the two
+        return encodedTreeString + divider + encodedFileString;
     }
     
     /**
      * Encodes the given Huffman tree into a string of 0s and 1s.
      * @param tree Huffman tree to be encoded
-     * @param bitTreeStructure the string that ends up as the bit representation of the tree
+     * @param treeBuilder the stringbuilder that ends up as the bit representation of the tree
      * @return a string that contains the given huffman tree in bit form
      */
-    public String encodeTreeToBinaryForm(HuffmanNode tree, String bitTreeStructure) {
-        if (!tree.isLeaf) {
-            bitTreeStructure += '0';
-            //first, encode the leftmost subtree
-            bitTreeStructure = encodeTreeToBinaryForm(tree.left, bitTreeStructure);   
-            //then, the subtree on the right
-            bitTreeStructure = encodeTreeToBinaryForm(tree.right, bitTreeStructure);
-        } else if (tree.isLeaf) {
-            //get the node's character in 8-bit-long binary format and add it 
-            //directly behind the leaf indicator. do the same for its weight in a 32-bit
+    public String encodeTreeToBinaryForm(PriorityQueue<HuffmanNode> leaves) {
+        //not a leaf, represented as a 0
+        StringBuilder treeBuilder = new StringBuilder();
+        while (leaves.size() > 0) {
+            HuffmanNode leaf = leaves.poll();
             StringBuilder bitBuilder = new StringBuilder(7);
             
             //get the character's binary representation and ensure it's 8 bits long
-            String nodeValueBitForm = Integer.toBinaryString(tree.value);
+            String nodeValueBitForm = Integer.toBinaryString(leaf.value);
             for (int i = 0; i < 8 - nodeValueBitForm.length(); i++) {
                 bitBuilder.append('0');
             }
@@ -63,16 +71,16 @@ public class Huffman {
             bitBuilder.setLength(0);
             
             //get the weight's binary representation and ensure it's 32 bits long
-            String nodeWeightBitForm = Integer.toBinaryString(tree.weight);
-            for (int i = 0; i < 32 - nodeValueBitForm.length(); i++) {
+            String nodeWeightBitForm = Integer.toBinaryString(leaf.weight);
+            for (int i = 0; i < 32 - nodeWeightBitForm.length(); i++) {
                 bitBuilder.append('0');
             }
             nodeWeightBitForm = bitBuilder.toString() + nodeWeightBitForm;
             
-            bitTreeStructure += bitTreeStructure + nodeValueBitForm + nodeWeightBitForm;
+            treeBuilder.append(nodeValueBitForm);
+            treeBuilder.append(nodeWeightBitForm);
         }
-        
-        return bitTreeStructure;
+        return treeBuilder.toString();
     }
     
     
@@ -97,31 +105,40 @@ public class Huffman {
     }
     
     /**
-     * Decodes the given string of 0s and 1s to its original form.
-     * [WORK IN PROGRESS - NOT YET FINISHED]
-     * @param i the index where the function is operating
-     * @param bitTreeStructure the bit string -form tree that is to be converted to its original form
-     * @return a string that contains the given huffman tree in bit form
+     * Decodes the given string of 0s and 1s into a character frequency array.
+     * @param bitTreeStructure the bit string -form tree from which the frequency array will be extracted
+     * @return the original frequency array that can be used to build a huffman tree
      */
-    public HuffmanNode decodeFreqArrayFromBinaryForm(String bitTreeStructure, int i, HuffmanNode node) {
-        char bit = bitTreeStructure.charAt(i);
-        i++;
+    public int[] decodeFreqArrayFromBinaryForm(String bitTreeStructure) {
+        int[] charFreqs = new int[256];
         
-        if (bit == '1') {
-            
-        } else if (bit == '0') {
-            
+        for (int i = 0; i < bitTreeStructure.length(); i += 40) {
+            String characterAndWeight = bitTreeStructure.substring(i, i + 40);
+            int charIntValue = Integer.parseInt(characterAndWeight.substring(0, 8), 2);
+            int charWeightValue = Integer.parseInt(characterAndWeight.substring(9, 40), 2);
+                
+                //make an entry into the provided array/table with the extracted values
+             charFreqs[charIntValue] = charWeightValue;
         }
-        return new HuffmanNode(bit, i);
+        //freq array will be complete after the loop
+        return charFreqs;
     }
     
     /**
      * Decompress any binary input produced by the compress() -method
-     * @param encodedObject object that contains the message-to-be-decoded and 
+     * @param inputAsString string that contains the message-to-be-decoded and 
      * the associated decoding key (Huffman tree)
      */
-    public String decompress(HuffmanEncodedResult encodedObject) {
-        StringBuilder resultBuilder = new StringBuilder(encodedObject.encodedContent.length()/3);
+    public String decompress(String inputAsString) {
+        
+        String[] encodedTreeAndFile = inputAsString.split("111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
+        int[] charFreqs = decodeFreqArrayFromBinaryForm(encodedTreeAndFile[0]);
+        
+        HuffmanNode huffmanTree = makeTreeFromFrequencyArray(charFreqs);
+        
+        HuffmanEncodedResult encodedObject = new HuffmanEncodedResult(huffmanTree, encodedTreeAndFile[1]);
+        
+        StringBuilder resultBuilder = new StringBuilder(inputAsString.length()/3);
         HuffmanNode currentNode = encodedObject.huffmanTree;
         int numberOfBits = 0;
 
@@ -139,7 +156,6 @@ public class Huffman {
                 }
                 numberOfBits++;
             }
-//            System.out.println("asdknnalfknsknfasknfdlakndflaskdnflanfdas");
             
             resultBuilder.append(currentNode.value);
             currentNode = encodedObject.huffmanTree;

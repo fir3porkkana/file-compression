@@ -8,7 +8,13 @@ So far, the usage is quite limited, consisting only of encoding and decoding a s
 
 [the implementation document](/dokumentaatio/implementation.md)
 
+[testing document](/dokumentaatio/testing.md)
+
 [definition document](/dokumentaatio/maaritteldokumentti.md)
+
+[week report 6](/dokumentaatio/week_report6.md)
+
+[week report 5](/dokumentaatio/week_report5.md)
 
 [week report 4](/dokumentaatio/viikkoraportti4.md)
 

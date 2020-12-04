@@ -6,4 +6,4 @@ perjantaina viimeistelin algoritmin ydintoiminnallisuuden, sekä loin dekoodausa
 
 seuraavaksi sitten omia tietorakenteita toteuttamaan sekä suorituskykytestausta pystyttämään.
 
-[testikattavuus_vko4](/jacoco/testikattavuus_vko4.png)
+![testikattavuus_vko4](/jacoco/testikattavuus_vko4.png)
