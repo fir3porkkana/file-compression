@@ -27,7 +27,7 @@ public class Main {
         
         String rez = huffmani.compress(test);
         System.out.println("encoded string: " + rez);
-        System.out.println("de-encoded string: \n" + huffmani.decompress(rez));
+        System.out.println("decoded string: \n" + huffmani.decompress(rez));
          
     }
     

@@ -23,8 +23,19 @@ public class HuffmanNode implements Comparable<HuffmanNode> {
         this.isLeaf = false;
     }
     
+    public HuffmanNode(HuffmanNode left, HuffmanNode right) {
+        this.left = left;
+        this.right = right;
+        this.isLeaf = false;
+    }
+    
     public HuffmanNode(char value, int weight) {
         this.weight = weight;
+        this.value = value;
+        this.isLeaf = true;
+    }
+    
+    public HuffmanNode(char value) {
         this.value = value;
         this.isLeaf = true;
     }

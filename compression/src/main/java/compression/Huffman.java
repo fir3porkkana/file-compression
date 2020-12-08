@@ -7,6 +7,7 @@ import java.util.PriorityQueue;
  * @author tiera
  */
 public class Huffman {
+    private int decodingIndex;
 
     public Huffman() {
     }
@@ -24,28 +25,32 @@ public class Huffman {
             charFreqs[c]++;
         }
         
+        //build the tree
         HuffmanNode rootNode = makeTreeFromFrequencyArray(charFreqs);
         
         String[] lookupTable = populateLookupTable(rootNode, new String[256]);
         
+        //encode the message
         String encodedFileString = generateBinaryOutput(lookupTable, input);
         
-        PriorityQueue<HuffmanNode> pqueueContainingLeaves = new PriorityQueue<>();
+        //encode the tree
+        StringBuilder treeBuilder = new StringBuilder();
+        encodeNode(rootNode, treeBuilder);
         
-        for (int i = 0; i < charFreqs.length; i++) {
-            if (charFreqs[i] > 0) {
-                pqueueContainingLeaves.add(new HuffmanNode((char) i, charFreqs[i]));
-            }
+        String encodedTreeString = treeBuilder.toString();
+        
+        //get the encoded tree length
+        String treeLength = Integer.toBinaryString(encodedTreeString.length());
+        //... and store it in a 16-bit byte
+        treeBuilder.setLength(0);
+        for (int i = 0; i < 16 - treeLength.length(); i++) {
+                treeBuilder.append('0');
         }
+        treeLength = treeBuilder.toString() + treeLength;
         
-        String encodedTreeString = encodeTreeToBinaryForm(pqueueContainingLeaves);
-        System.out.println("merkkejä: " + (encodedTreeString.length()/40));
-        
-        String divider = "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
-        
-        //return the tree and the encoded input with a 48-bit
-        //divider in between the two
-        return encodedTreeString + divider + encodedFileString;
+        //return the length of the tree, the tree itself and the original message
+        //in an encoded string
+        return treeLength + encodedTreeString + encodedFileString;
     }
     
     /**
@@ -68,19 +73,46 @@ public class Huffman {
             }
             nodeValueBitForm = bitBuilder.toString() + nodeValueBitForm;
             
-            bitBuilder.setLength(0);
-            
-            //get the weight's binary representation and ensure it's 32 bits long
-            String nodeWeightBitForm = Integer.toBinaryString(leaf.weight);
-            for (int i = 0; i < 32 - nodeWeightBitForm.length(); i++) {
-                bitBuilder.append('0');
-            }
-            nodeWeightBitForm = bitBuilder.toString() + nodeWeightBitForm;
-            
             treeBuilder.append(nodeValueBitForm);
-            treeBuilder.append(nodeWeightBitForm);
         }
         return treeBuilder.toString();
+    }
+    
+    public void encodeNode(HuffmanNode node, StringBuilder treeBuilder) {
+        if (node.isLeaf) {
+            StringBuilder bitBuilder = new StringBuilder();
+
+            treeBuilder.append('1');
+            String nodeValueBitForm = Integer.toBinaryString(node.value);
+            for (int i = 0; i < 8 - nodeValueBitForm.length(); i++) {
+                bitBuilder.append('0');
+            }
+            nodeValueBitForm = bitBuilder.toString() + nodeValueBitForm;
+            treeBuilder.append(nodeValueBitForm);
+        } else {
+            treeBuilder.append('0');
+            encodeNode(node.left, treeBuilder);
+            encodeNode(node.right, treeBuilder);
+        }
+    }
+    
+    public HuffmanNode readNode(String treeString) {
+        char bit = treeString.charAt(decodingIndex);
+        decodingIndex++;
+        
+        if (bit == '1') {
+            
+            //extract the character from the next 8 bits and move the index over 
+            //to the next unread bit
+            int charIntValue = Integer.parseInt(treeString.substring(decodingIndex, decodingIndex + 8), 2);
+            decodingIndex += 8;
+            
+            return new HuffmanNode((char) charIntValue);
+        } else {
+            HuffmanNode left = readNode(treeString);
+            HuffmanNode right = readNode(treeString);
+            return new HuffmanNode(left, right);
+        }
     }
     
     
@@ -130,13 +162,17 @@ public class Huffman {
      * the associated decoding key (Huffman tree)
      */
     public String decompress(String inputAsString) {
+        decodingIndex = 0;
         
-        String[] encodedTreeAndFile = inputAsString.split("111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        int[] charFreqs = decodeFreqArrayFromBinaryForm(encodedTreeAndFile[0]);
+        //extract length of the tree
+        int treeLength = Integer.parseInt(inputAsString.substring(0, 16), 2);
         
-        HuffmanNode huffmanTree = makeTreeFromFrequencyArray(charFreqs);
+        //with that, extract the tree itself
+        String encodedTree = inputAsString.substring(16, 16 + treeLength);
+
+        HuffmanNode huffmanTree = readNode(encodedTree);
         
-        HuffmanEncodedResult encodedObject = new HuffmanEncodedResult(huffmanTree, encodedTreeAndFile[1]);
+        HuffmanEncodedResult encodedObject = new HuffmanEncodedResult(huffmanTree, inputAsString.substring(encodedTree.length() + 16));
         
         StringBuilder resultBuilder = new StringBuilder(inputAsString.length()/3);
         HuffmanNode currentNode = encodedObject.huffmanTree;
@@ -163,7 +199,7 @@ public class Huffman {
         
         return resultBuilder.toString();
     }
-    
+
     /**
      * Calls a recursive function to generate the contents of the lookup-table 
      * based on the provided, complete Huffman tree
@@ -173,6 +209,10 @@ public class Huffman {
      * has been filled according to the contents of the Huffman tree.
      */
     public String[] populateLookupTable(HuffmanNode node, String[] lookupTable) {
+        if (node.isLeaf) {
+            lookupTable[node.value] = "0";
+            return lookupTable;
+        }
         recursivelyPopulate(node, "", lookupTable);
         return lookupTable;
     }
