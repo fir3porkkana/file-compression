@@ -4,7 +4,7 @@ the project has been tested via unit tests and by hand
 
 ### unit tests
 
-these tests cover some of the data structures made for the project, and can be executed via ```gradle test```
+these tests cover some of the data structures and the functionality of the core class made for the project, and can be executed via ```gradle test```. 
 
 ### hand testing
 

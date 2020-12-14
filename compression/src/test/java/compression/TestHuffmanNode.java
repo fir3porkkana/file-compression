@@ -1,4 +1,4 @@
-import compression.HuffmanNode;
+package compression;
 
 import static org.junit.Assert.*;
 
