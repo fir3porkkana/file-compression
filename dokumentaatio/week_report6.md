@@ -7,4 +7,4 @@ because of this week turning out the way it did, nothing else has progressed.
 
 timewise, i spent about 8 hours all around.
 
-![test_coverage_for_week_6](/jacoco/test_coverage_for_week_6)
+![test_coverage_for_week_6](jacoco/test_coverage_for_week_6)

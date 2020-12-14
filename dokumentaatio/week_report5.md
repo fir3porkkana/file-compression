@@ -6,4 +6,4 @@ after the so-called "modularity update" into the compression, i can actually imp
 
 timewise, i spent about 7 hours all around.
 
-![testikattavuus_vko5](/jacoco/testikattavuus_vko5.png)
+![testikattavuus_vko5](jacoco/testikattavuus_vko5.png)

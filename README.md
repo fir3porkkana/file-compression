@@ -12,7 +12,7 @@ So far, the usage is quite limited, consisting only of encoding and decoding a s
 
 [definition document](/dokumentaatio/maaritteldokumentti.md)
 
-[*last report / week report 7*](/dokumentaatio/week_report7.md)
+[**last report / week report 7**](/dokumentaatio/week_report7.md)
 
 [week report 6](/dokumentaatio/week_report6.md)
 
