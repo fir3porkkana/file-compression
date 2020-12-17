@@ -1,7 +1,4 @@
 package compression;
-
-import java.util.PriorityQueue;
-
 /**
  *
  * @author tiera
@@ -108,10 +105,10 @@ public class Huffman {
      * @return a Huffman tree representing the array
      */
     public HuffmanNode makeTreeFromFrequencyArray(int[] charFreqs) {
-        PriorityQueue<HuffmanNode> pqueueContainingLeaves = new PriorityQueue<>();
+        MyPQueue pqueueContainingLeaves = new MyPQueue(256);
         for (int i = 0; i < charFreqs.length; i++) {
             if (charFreqs[i] > 0) {
-                pqueueContainingLeaves.add(new HuffmanNode((char) i, charFreqs[i]));
+                pqueueContainingLeaves.push(new HuffmanNode((char) i, charFreqs[i]));
             }
         }
         
@@ -122,7 +119,7 @@ public class Huffman {
             HuffmanNode right = pqueueContainingLeaves.poll();
             HuffmanNode tree = new HuffmanNode(left, right, left.weight + right.weight);
             
-            pqueueContainingLeaves.add(tree);
+            pqueueContainingLeaves.push(tree);
         }
         
         //return the root node
