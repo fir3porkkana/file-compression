@@ -6,6 +6,8 @@ A program that can compress and decompress .txt-files using a self-written algor
 
 ## the documentation
 
+[instruction manual](/dokumentaatio/manual.md)
+
 [the implementation document](/dokumentaatio/implementation.md)
 
 [testing document](/dokumentaatio/testing.md)
