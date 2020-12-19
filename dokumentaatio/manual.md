@@ -1,6 +1,6 @@
 ## the user manual
 
-prep: download the latest release jar or clone the repository onto your computer. it's best to have 
+prep: download the latest release jar or clone the repository onto your computer. it's best to have the latest release of java installed, as that is what this project is written in and as such may not work on earlier versions
 
 ### jar
 
