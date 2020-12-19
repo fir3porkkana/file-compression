@@ -29,6 +29,11 @@ jacocoTestReport {
     // }
 }
 
+jar {
+    baseName = "compressor"
+    version = "1.0"
+}
+
 run {
     standardInput = System.in
     standardOutput = System.out

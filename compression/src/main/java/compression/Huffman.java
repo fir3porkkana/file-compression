@@ -127,26 +127,6 @@ public class Huffman {
     }
     
     /**
-     * Decodes the given string of 0s and 1s into a character frequency array.
-     * @param bitTreeStructure the bit string -form tree from which the frequency array will be extracted
-     * @return the original frequency array that can be used to build a huffman tree
-     */
-//    public int[] decodeFreqArrayFromBinaryForm(String bitTreeStructure) {
-//        int[] charFreqs = new int[256];
-//        
-//        for (int i = 0; i < bitTreeStructure.length(); i += 40) {
-//            String characterAndWeight = bitTreeStructure.substring(i, i + 40);
-//            int charIntValue = Integer.parseInt(characterAndWeight.substring(0, 8), 2);
-//            int charWeightValue = Integer.parseInt(characterAndWeight.substring(9, 40), 2);
-//                
-//                //make an entry into the provided array/table with the extracted values
-//             charFreqs[charIntValue] = charWeightValue;
-//        }
-//        //freq array will be complete after the loop
-//        return charFreqs;
-//    }
-    
-    /**
      * Decompress any binary input produced by the compress() -method
      * @param inputAsString string that contains the message-to-be-decoded and 
      * the associated decoding key (Huffman tree)
@@ -184,6 +164,9 @@ public class Huffman {
             //if the bit is 0, go left, and if the bit is 1, go right
             //keep doing so until a leaf is encountered
             while (!currentNode.isLeaf) {
+                if (numberOfBits >= encodedObject.encodedContent.length()) {
+                    break;
+                }
                 char bit = encodedObject.encodedContent.charAt(numberOfBits);
                 if (bit == '0') {
                     currentNode = currentNode.left;
@@ -192,6 +175,10 @@ public class Huffman {
                     currentNode = currentNode.right;
                 }
                 numberOfBits++;
+            }
+            
+            if (numberOfBits >= encodedObject.encodedContent.length()) {
+                break;
             }
             
             //concatenate the discovered leaf's value to the result string
